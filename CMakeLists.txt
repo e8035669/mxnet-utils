@@ -36,8 +36,7 @@ set(DEPS_PATHS
 # Library paths
 set(LIB_PATHS
     # ${CMAKE_CURRENT_SOURCE_DIR}/lib/demo_lib
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/image
-    ${CMAKE_CURRENT_SOURCE_DIR}/lib/predictor
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/mxnet-utils
     )
 
 # Utility paths
