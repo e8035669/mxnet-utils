@@ -25,6 +25,10 @@ void Predictor::setInputSize(const mxnet::cpp::Shape& shape) {
     this->inputShape = shape;
 }
 
+mxnet::cpp::Shape Predictor::getInputSize() {
+    return inputShape;
+}
+
 void Predictor::prepare() {
     argParam["data"] = NDArray(inputShape, ctx);
     exec.reset(net.SimpleBind(ctx, argParam, {}, {}, auxParam));

@@ -20,6 +20,8 @@ class Predictor {
 
     void setInputSize(const mxnet::cpp::Shape& shape);
 
+    mxnet::cpp::Shape getInputSize();
+
     void prepare();
 
     std::vector<mxnet::cpp::NDArray> predict(const mxnet::cpp::NDArray& data);

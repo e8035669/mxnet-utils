@@ -1,5 +1,7 @@
 #include "detect_result.h"
 
+#include <opencv2/imgproc.hpp>
+
 using namespace std;
 using namespace cv;
 using namespace mxnet::cpp;
@@ -34,6 +36,41 @@ std::vector<DetectResult> toDetectResult(
             res.bbox = Rect(tl, br);
             results.push_back(res);
         }
+    }
+
+    return results;
+}
+
+std::vector<DetectResult> DetectPredictor::predict(cv::InputArray input,
+                                                   float thresh) {
+    Shape inputShape = this->getInputSize();
+    Mat inputMat = input.getMat();
+    if (inputMat.channels() != (int)inputShape[3]) {
+        throw runtime_error("Channel not match");
+    }
+    double fx = 1.0, fy = 1.0;
+    if (inputMat.size() != Size(inputShape[2], inputShape[1])) {
+        fx = (double)inputMat.cols / inputShape[2];
+        fy = (double)inputMat.rows / inputShape[1];
+        cv::resize(inputMat, inputMat, Size(inputShape[2], inputShape[1]));
+    }
+    Mat floatMat;
+    inputMat.convertTo(floatMat, CV_32F);
+
+    NDArray inputnd(inputShape, Context::cpu());
+    inputnd.SyncCopyFromCPU((float*)floatMat.data, inputShape.Size());
+
+    vector<NDArray> outputs = Predictor::predict(inputnd);
+
+    vector<DetectResult> results = toDetectResult(outputs, thresh);
+    for (DetectResult& r : results) {
+        Point tl = r.bbox.tl();
+        Point br = r.bbox.br();
+        tl.x *= fx;
+        tl.y *= fy;
+        br.x *= fx;
+        br.y *= fy;
+        r.bbox = Rect(tl, br);
     }
 
     return results;

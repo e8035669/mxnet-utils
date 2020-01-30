@@ -63,5 +63,24 @@ mxnet::cpp::NDArray asInContext(const mxnet::cpp::NDArray& array,
     }
 }
 
+void convertMat2NDArray(cv::InputArray input, mxnet::cpp::NDArray* output) {
+
+}
+
+void convertMat2NDArrayHWC(cv::InputArray input, mxnet::cpp::NDArray* output) {
+
+}
+
+void convertNDArray2Mat(const mxnet::cpp::NDArray& input,
+        cv::OutputArray output) {
+
+}
+
+void convertNDArray2MatHWC(const mxnet::cpp::NDArray& input,
+        cv::OutputArray output) {
+
+}
+
+
 }  // namespace mxutils
 

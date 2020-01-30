@@ -3,8 +3,10 @@
 
 #include <vector>
 
-#include <opencv2/core.hpp>
 #include <mxnet-cpp/MxNetCpp.h>
+#include <opencv2/core.hpp>
+
+#include "predictor.h"
 
 namespace mxutils {
 
@@ -14,8 +16,15 @@ struct DetectResult {
     cv::Rect bbox;
 };
 
-std::vector<DetectResult> toDetectResult(const std::vector<mxnet::cpp::NDArray>& output, float thresh);
+std::vector<DetectResult> toDetectResult(
+    const std::vector<mxnet::cpp::NDArray>& output, float thresh);
 
+class DetectPredictor : public Predictor {
+   public:
+    DetectPredictor(const mxnet::cpp::Context& ctx) : Predictor(ctx) {}
+
+    std::vector<DetectResult> predict(cv::InputArray input, float thresh);
+};
 
 }  // namespace mxutils
 
