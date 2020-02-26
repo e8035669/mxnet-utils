@@ -29,14 +29,16 @@
 # For more information, please refer to <http://unlicense.org/>
 
 from distutils.sysconfig import get_python_inc
+import os
 import platform
 import os.path as p
 import subprocess
-import ycm_core
 
 DIR_OF_THIS_SCRIPT = p.abspath( p.dirname( __file__ ) )
 DIR_OF_THIRD_PARTY = p.join( DIR_OF_THIS_SCRIPT, 'third_party' )
 SOURCE_EXTENSIONS = [ '.cpp', '.cxx', '.cc', '.c', '.m', '.mm' ]
+
+database = None
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
@@ -61,23 +63,6 @@ get_python_inc(),
 if platform.system() != 'Windows':
   flags.append( '-std=c++14' )
 
-def findGccVersion():
-  ver = subprocess.check_output(['gcc', '--version']).decode('utf8')
-  ver = ver.splitlines()[0]
-  ver = ver.split(' ')[-1].split('.')[0]
-  return ver
-
-def appendGccHeaders(flags):
-  gccVersionStr = findGccVersion()
-  flags.append('-I/usr/local/include')
-  flags.append('-I/usr/include')
-  flags.append('-I/usr/include/x86_64-linux-gnu')
-  flags.append('-I/usr/include/c++/' + gccVersionStr)
-  flags.append('-I/usr/include/x86_64-linux-gnu/c++/' + gccVersionStr)
-
-appendGccHeaders(flags)
-print('fallback flags: ', flags)
-
 
 # Set this to the absolute path to the folder (NOT the file!) containing the
 # compile_commands.json file to use that instead of 'flags'. See here for
@@ -90,11 +75,6 @@ print('fallback flags: ', flags)
 # Most projects will NOT need to set this to anything; you can just change the
 # 'flags' list of compilation flags. Notice that YCM itself uses that approach.
 compilation_database_folder = p.join(DIR_OF_THIS_SCRIPT, 'build/')
-
-if p.exists( compilation_database_folder ):
-  database = ycm_core.CompilationDatabase( compilation_database_folder )
-else:
-  database = None
 
 
 def IsHeaderFile( filename ):
@@ -117,12 +97,18 @@ def PathToPythonUsedDuringBuild():
     filepath = p.join( DIR_OF_THIS_SCRIPT, 'PYTHON_USED_DURING_BUILDING' )
     with open( filepath ) as f:
       return f.read().strip()
-  # We need to check for IOError for Python 2 and OSError for Python 3.
-  except ( IOError, OSError ):
+  except OSError:
     return None
 
 
 def Settings( **kwargs ):
+  # Do NOT import ycm_core at module scope.
+  import ycm_core
+
+  global database
+  if database is None and p.exists( compilation_database_folder ):
+    database = ycm_core.CompilationDatabase( compilation_database_folder )
+
   language = kwargs[ 'language' ]
 
   if language == 'cfamily':
@@ -154,8 +140,6 @@ def Settings( **kwargs ):
     # python list, but a "list-like" StringVec object.
     final_flags = list( compilation_info.compiler_flags_ )
 
-    appendGccHeaders(final_flags)
-
     return {
       'flags': final_flags,
       'include_paths_relative_to_dir': compilation_info.compiler_working_dir_,
@@ -170,13 +154,6 @@ def Settings( **kwargs ):
   return {}
 
 
-def GetStandardLibraryIndexInSysPath( sys_path ):
-  for index, path in enumerate( sys_path ):
-    if p.isfile( p.join( path, 'os.py' ) ):
-      return index
-  raise RuntimeError( 'Could not find standard library path in Python path.' )
-
-
 def PythonSysPath( **kwargs ):
   sys_path = kwargs[ 'sys_path' ]
 
@@ -186,6 +163,5 @@ def PythonSysPath( **kwargs ):
   #).rstrip().decode( 'utf8' )
 
   print(sys_path)
-
+  
   return sys_path
-

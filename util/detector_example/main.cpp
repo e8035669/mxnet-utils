@@ -1,5 +1,6 @@
 #include <opencv2/opencv.hpp>
 #include <mxnet-cpp/MxNetCpp.h>
+#include <chrono>
 
 #include "detect_result.h"
 #include "draw.h"
@@ -42,6 +43,13 @@ int main(int argc, char** argv) {
             char keyin = waitKey(30);
             if (keyin == 27) {
                 run = false;
+            }
+            if (keyin == 's') {
+                auto now = chrono::system_clock::now();
+                chrono::nanoseconds nanos(now.time_since_epoch());
+                string filename = "Image" + to_string(nanos.count()) + ".png";
+                imwrite(filename, img);
+                cout << "Save to '" << filename << "'." << endl;
             }
         }
     } else {
