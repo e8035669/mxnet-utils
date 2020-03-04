@@ -1,6 +1,7 @@
 #include "draw.h"
 
 #include <opencv2/imgproc.hpp>
+#include <string>
 
 using namespace std;
 using namespace cv;
@@ -18,10 +19,19 @@ cv::Scalar getRandomColor(int id) {
 }
 
 void drawBbox(cv::InputOutputArray img, const DetectResult& res) {
+    drawBbox(img, res, {});
+}
+
+void drawBbox(cv::InputOutputArray img, const DetectResult& res,
+              const std::vector<std::string>& class_names) {
     Scalar color = getRandomColor(res.cls);
     rectangle(img, res.bbox, color, 1);
-    putText(img, to_string(res.cls) + ": " + to_string(res.score),
-            res.bbox.tl() + Point(5, 20), 0, 0.3, color, 1, LINE_AA);
+    string text = to_string(res.cls) + ": " + to_string(res.score);
+    if (res.cls < (int)class_names.size()) {
+        text = class_names[(size_t)res.cls] + ": " + to_string(res.score);
+    }
+
+    putText(img, text, res.bbox.tl() + Point(5, 10), 0, 0.3, color, 1, LINE_AA);
 }
 
 }  // namespace mxutils

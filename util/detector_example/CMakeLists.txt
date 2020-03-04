@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 2.8)
 #set(PROJECT_NAME demo_util)  # Set project name manually
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)  # Set project name with dir name
 set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS mxnet-utils ${MXNet_LIBRARIES} ${OpenCV_LIBS})
+set(PROJECT_DEPS mxnet-utils clipp::clipp ${MXNet_LIBRARIES} ${OpenCV_LIBS})
 
 # Compile setting
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
