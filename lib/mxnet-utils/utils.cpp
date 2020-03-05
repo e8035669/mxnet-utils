@@ -30,6 +30,7 @@ std::string shapeof(const mxnet::cpp::NDArray& array) {
         if (i) ss << ", ";
         ss << arrayShape[i];
     }
+    ss << ios::dec;
     ss << ")";
     return ss.str();
 }
