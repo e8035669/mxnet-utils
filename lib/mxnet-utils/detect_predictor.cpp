@@ -1,4 +1,4 @@
-#include "detect_result.h"
+#include "detect_predictor.h"
 
 #include <opencv2/imgproc.hpp>
 

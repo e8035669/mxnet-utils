@@ -3,8 +3,7 @@
 
 #include <opencv2/core.hpp>
 
-#include "detect_result.h"
-#include "opencv2/core/mat.hpp"
+#include "detect_predictor.h"
 
 namespace mxutils {
 

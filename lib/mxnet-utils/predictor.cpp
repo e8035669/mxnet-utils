@@ -41,7 +41,7 @@ std::vector<mxnet::cpp::NDArray> Predictor::predict(
     std::vector<NDArray> out(exec->outputs.size());
     for (size_t i = 0; i < exec->outputs.size(); ++i) {
         out[i] = asInContext(exec->outputs[i], Context::cpu());
-        out[i].WaitToRead();
+        // out[i].WaitToRead();
     }
     return out;
 }

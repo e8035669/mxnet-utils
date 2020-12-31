@@ -6,7 +6,7 @@
 #include <opencv2/opencv.hpp>
 #include <string>
 
-#include "detect_result.h"
+#include "detect_predictor.h"
 #include "draw.h"
 
 using namespace std;

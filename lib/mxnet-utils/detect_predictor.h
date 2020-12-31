@@ -1,5 +1,5 @@
-#ifndef _MXUTILS_DETECT_RESULT_H_
-#define _MXUTILS_DETECT_RESULT_H_
+#ifndef _MXUTILS_DETECT_PREDICTOR_H_
+#define _MXUTILS_DETECT_PREDICTOR_H_
 
 #include <vector>
 

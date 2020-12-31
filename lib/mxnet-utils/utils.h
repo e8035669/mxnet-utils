@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <mxnet-cpp/MxNetCpp.h>
 #include <opencv2/core.hpp>
@@ -25,16 +26,15 @@ void splitParamMap(const NDArrayMap& paramMap,
 mxnet::cpp::NDArray asInContext(const mxnet::cpp::NDArray& array,
                                 const mxnet::cpp::Context& ctx);
 
-void convertMat2NDArray(cv::InputArray input, mxnet::cpp::NDArray* output);
+std::vector<std::string> loadLineFromIstream(std::istream& is);
+
+std::vector<std::string> loadLinesInFile(const std::string& path);
+
+std::vector<std::string> loadClassnames(const std::string& path);
+
+void convertMat2NDArrayCHW(cv::InputArray input, mxnet::cpp::NDArray* output);
 
 void convertMat2NDArrayHWC(cv::InputArray input, mxnet::cpp::NDArray* output);
-
-void convertNDArray2Mat(const mxnet::cpp::NDArray& input,
-                        cv::OutputArray output);
-
-void convertNDArray2MatHWC(const mxnet::cpp::NDArray& input,
-                        cv::OutputArray output);
-
 
 }  // namespace mxutils
 

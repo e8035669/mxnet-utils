@@ -1,6 +1,13 @@
 #include "utils.h"
+#include "mxnet-cpp/op.h"
+#include "mxnet-cpp/operator.h"
+#include "mxnet-cpp/shape.h"
+#include "mxnet-cpp/symbol.h"
+#include "opencv2/core/cvstd_wrapper.hpp"
 
+#include <fstream>
 #include <sstream>
+#include <string>
 
 using namespace std;
 
@@ -64,24 +71,41 @@ mxnet::cpp::NDArray asInContext(const mxnet::cpp::NDArray& array,
     }
 }
 
-void convertMat2NDArray(cv::InputArray input, mxnet::cpp::NDArray* output) {
+std::vector<std::string> loadLineFromIstream(std::istream& is) {
+    std::vector<std::string> context;
+    for (std::string s; std::getline(is, s);) {
+        context.push_back(s);
+    }
+    return context;
+}
 
+std::vector<std::string> loadLinesInFile(const std::string& path) {
+    ifstream ifs(path);
+    return loadLineFromIstream(ifs);
+}
+
+std::vector<std::string> loadClassnames(const std::string& path) {
+    return loadLinesInFile(path);
+}
+
+void convertMat2NDArrayCHW(cv::InputArray input, mxnet::cpp::NDArray* output) {
+    convertMat2NDArrayHWC(input, output);
+    if (output != nullptr) {
+        mxnet::cpp::Operator("transpose")(mxnet::cpp::Shape(0, 3, 1, 2),
+                                          *output)
+            .Invoke(*output);
+    }
 }
 
 void convertMat2NDArrayHWC(cv::InputArray input, mxnet::cpp::NDArray* output) {
-
+    if (output != nullptr) {
+        cv::Mat inputMat = input.getMat();
+        cv::Mat floatMat;
+        inputMat.convertTo(floatMat, CV_32F, 1 / 255.);
+        size_t elems = floatMat.cols * floatMat.rows * floatMat.channels();
+        output->SyncCopyFromCPU((float*)floatMat.data, elems);
+    }
 }
-
-void convertNDArray2Mat(const mxnet::cpp::NDArray& input,
-        cv::OutputArray output) {
-
-}
-
-void convertNDArray2MatHWC(const mxnet::cpp::NDArray& input,
-        cv::OutputArray output) {
-
-}
-
 
 }  // namespace mxutils
 
